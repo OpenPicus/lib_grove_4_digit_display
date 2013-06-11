@@ -12,56 +12,55 @@ To use the library inside your Flyport project, just follow these steps:<br>
 #include "taskFlyport.h"
 #include "grovelib.h"
 #include "4digitdisplay.h"
- 
- 
+
+
 unsigned char mex[20];
- 
+
 void FlyportTask()
-{  
+{	
 	vTaskDelay(100);
 	UARTWrite(1,"Welcome to GROVE NEST example!\r\n");
- 
+
 	// GROVE board
 	void *board = new(GroveNest);
- 
-	// 4 digit GROVE display 	
-	void *disp = new(_4Digit,6,POINT);
-	attachToBoard(board,disp,DIG1);
- 
+
+	
 	UARTWrite(1,"Flyport connected... hello world!\r\n");
 	vTaskDelay(200);
 	while(1)
 	{
-		/*Configure digit number and number to be displayed*/
+		// GROVE devices	
+		void *disp = new(_4Digit,6,POINT);
+		attachToBoard(board,disp,DIG1);
+		/*Configure digit number and number to be shown*/
 		configure(disp,1,1);
 		configure(disp,2,2);
 		configure(disp,3,3);
 		configure(disp,4,4);
- 
+
 		/*Turn the display on*/
 		set(disp,ON);
 		vTaskDelay(200);
 		/*Turn the display off*/
 		set(disp,OFF);
- 
+
 		configure(disp,1,5);
 		configure(disp,2,6);
 		configure(disp,3,7);
 		configure(disp,4,8);
- 
+		set(disp,ON);
+		vTaskDelay(100);
+		set(disp,OFF);
+		vTaskDelay(100);
+		set(disp,ON);
+		vTaskDelay(100);
+		set(disp,OFF);
+		vTaskDelay(100);
+		set(disp,ON);
+		vTaskDelay(100);
+		set(disp,OFF);
 		/*Blinking*/
-		set(disp,ON);
-		vTaskDelay(100);
-		set(disp,OFF);
-		vTaskDelay(100);
-		set(disp,ON);
-		vTaskDelay(100);
-		set(disp,OFF);
-		vTaskDelay(100);
-		set(disp,ON);
-		vTaskDelay(100);
-		set(disp,OFF);
- 
+		
 		configure(disp,1,9);
 		configure(disp,2,10);
 		configure(disp,3,11);
@@ -78,9 +77,27 @@ void FlyportTask()
 		set(disp,ON);
 		vTaskDelay(200);
 		set(disp,OFF);
- 
+
+		/*delete the disp object*/
+		delete(disp,&disp);
+		
+		/*create a new _4DigitDisplay object with no double dots*/
+		void *disp1 = new(_4Digit,7,NOPOINT);
+		
+		attachToBoard(board,disp1,DIG1);
+		configure(disp1,1,0x0C);
+		configure(disp1,2,0x01);
+		configure(disp1,3,0x0A);
+		configure(disp1,4,0x00);
+		set(disp1,ON);
+		vTaskDelay(400);
+		set(disp1,OFF);
+		
+		/*delete the disp1 object*/
+		delete(disp1,&disp1);
 	}		
- 
+
 }
+
 
 </pre>
