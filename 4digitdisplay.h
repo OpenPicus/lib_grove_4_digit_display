@@ -54,5 +54,5 @@
  **************************************************************************/
 extern const void *_4Digit;
 
-#define POINT 1
-#define NOPOINT 0
+#define POINT 2
+#define NOPOINT 3

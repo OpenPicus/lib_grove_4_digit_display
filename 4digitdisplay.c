@@ -78,7 +78,7 @@ struct _4Digit
 	BYTE thirdDigit;
 	BYTE fourthDigit;
 	BYTE brightness;
-	BYTE point;
+//	BYTE point;
 };
 
 /*send the STOP Command*/
@@ -210,7 +210,7 @@ static void *_4Digit_ctor (void * _self, va_list *app)
 	struct _4Digit *self = _self;
 	self->brightness = va_arg(*app, const BYTE) + 0x87;
 	/*Reset all display's digits*/
-	self->point = va_arg(*app, const BYTE);
+	//self->point = va_arg(*app, const BYTE);
 	self->firstDigit = 0x00;
 	self->secondDigit = 0x00;
 	self->thirdDigit = 0x00;
@@ -252,7 +252,9 @@ static void *_4Digit_attach (void * _board,void *_sensor,int n)
 	sensor->inter = attachSensorToDigioBus(_board,n,5);//set 2 pins as output	
 	if(!sensor->inter)
 		return NULL;
+	taskENTER_CRITICAL();
 	program(sensor);	
+	taskEXIT_CRITICAL();
 	return sensor->inter;
 }	
 
@@ -266,13 +268,13 @@ static void *_4Digit_attach (void * _board,void *_sensor,int n)
  <UL>
 	<LI><B>return = 0:</B> The operation is always successful.</LI> 
  </UL>
- */
+ */ 
 static int _4Digit_config(void *_self,va_list *app)
 { 
 	struct _4Digit *self = _self;
 	BYTE param = va_arg(*app, const BYTE);
 	BYTE data = va_arg(*app, const BYTE);
-	data = coding(self->point,data);
+	//data = coding(point,data);
 	switch(param)
 	{
 		case 1:
@@ -304,10 +306,17 @@ static int _4Digit_set(void *_self,va_list *app)
 { 
 	struct _4Digit *self = _self;
 	BYTE param = va_arg(*app, const BYTE);	
+	BYTE point = va_arg(*app, const BYTE);
+	self->firstDigit = coding(point,self->firstDigit);
+	self->secondDigit = coding(point,self->secondDigit);
+	self->thirdDigit = coding(point,self->thirdDigit);
+	self->fourthDigit = coding(point,self->fourthDigit);
+	taskENTER_CRITICAL();
 	if(param)
 		program(self);
 	else
 		clearDisplay(self);
+	taskEXIT_CRITICAL();
 	return 0;
 }
 
